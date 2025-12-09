@@ -52,8 +52,12 @@ const LandingPage = () => {
     try {
       const formData = new FormData()
       formData.append('file', file)
+      formData.append('mode', 'full') // full, ocr_only, or segment_only
+      formData.append('filter_phi', 'true')
+      formData.append('include_regions', 'true')
       
-      const response = await fetch('http://localhost:8000/api/segment', {
+      // Use the new agent API endpoint
+      const response = await fetch('http://localhost:8000/api/process-image', {
         method: 'POST',
         body: formData,
       })
@@ -66,62 +70,74 @@ const LandingPage = () => {
       const data = await response.json()
       
         if (data.success) {
-        // Combined segmentation + OCR results
+        // Agent API response format
         const extractedTextValue = data.extracted_text || ''
-          const phiSummaryValue = data.phi_summary || []
-        const handwrittenCount = data.handwritten_regions || 0
-        const totalRegions = data.total_regions || 0
+        const redactedTextValue = data.redacted_text || extractedTextValue
+        const phiSummaryValue = data.phi_summary || []
+        const phiTypesValue = data.phi_types || {}
+        const regionsDetected = data.regions_detected || 0
+        const agentUsed = data.agent_used || 'Unknown'
+        const toolsUsed = data.tools_used || []
           
-          // Store the extracted text separately for clean display
-          setExtractedText(extractedTextValue || '(No handwritten text detected)')
-          // Store PHI summary for display
-          setPhiSummary(phiSummaryValue)
-          // Store medications and FDA alternatives
-          setMedications(data.medications || [])
-          setFdaAlternatives(data.fda_alternatives || [])
+        // Store the extracted and redacted text
+        setExtractedText(extractedTextValue || '(No text detected)')
+        // Store PHI summary for display
+        setPhiSummary(phiSummaryValue)
+        // Store medications and drug alternatives from agent
+        setMedications(data.medications || [])
+        setFdaAlternatives(data.drug_alternatives || [])
         
         // Format detailed OCR text output with metadata (for download/copy)
-        let textOutput = `Segmentation & OCR Results:\n`
+        let textOutput = `Agent-Based OCR Results:\n`
         textOutput += `${'='.repeat(50)}\n\n`
-        textOutput += `Total Regions Found: ${totalRegions}\n`
-        textOutput += `Handwritten Regions: ${handwrittenCount}\n`
-        textOutput += `Printed Regions: ${totalRegions - handwrittenCount}\n`
-        textOutput += `Segmentation Method: ${data.method || 'unknown'}\n\n`
+        textOutput += `Agent Used: ${agentUsed}\n`
+        textOutput += `Tools Used: ${toolsUsed.join(', ')}\n`
+        textOutput += `Processing Mode: ${data.mode || 'full'}\n`
+        textOutput += `Regions Detected: ${regionsDetected}\n\n`
         textOutput += `${'='.repeat(50)}\n\n`
-        textOutput += `Extracted Text (Handwritten Only):\n`
+        textOutput += `Extracted Text:\n`
         textOutput += `${'='.repeat(50)}\n\n`
-        textOutput += extractedTextValue || '(No handwritten text detected)'
+        textOutput += extractedTextValue || '(No text detected)'
+        textOutput += `\n\n${'='.repeat(50)}\n\n`
+        textOutput += `Redacted Text (PHI Filtered):\n`
+        textOutput += `${'='.repeat(50)}\n\n`
+        textOutput += redactedTextValue
         textOutput += `\n\n${'='.repeat(50)}\n`
         textOutput += `Text Length: ${extractedTextValue.length} characters\n`
+        textOutput += `PHI Entities Found: ${phiSummaryValue.length}\n`
         
-        // Add region details
-        if (data.regions && data.regions.length > 0) {
-          textOutput += `\nRegion Details:\n`
+        // Add PHI types summary
+        if (Object.keys(phiTypesValue).length > 0) {
+          textOutput += `\nPHI Types Detected:\n`
           textOutput += `${'='.repeat(50)}\n`
-          data.regions.forEach((region, index) => {
-            if (region.type === 'handwritten' && region.text) {
-              textOutput += `\nRegion ${region.id + 1} (Handwritten):\n`
-              textOutput += `  Text: ${region.text}\n`
-              textOutput += `  Area: ${region.area} pixels\n`
-            }
+          Object.entries(phiTypesValue).forEach(([type, count]) => {
+            textOutput += `  ${type}: ${count}\n`
           })
         }
         
         setOcrText(textOutput)
-        setSegmentationResults(data)
         
-        // Use annotated image (with segmentation and text labels) if available
+        // Store segmentation results for compatibility
+        setSegmentationResults({
+          success: true,
+          total_regions: regionsDetected,
+          handwritten_regions: 0, // Agent API doesn't distinguish yet
+          extracted_text: extractedTextValue,
+          redacted_text: redactedTextValue,
+          phi_summary: phiSummaryValue,
+          phi_types: phiTypesValue,
+          agent_used: agentUsed,
+          tools_used: toolsUsed
+        })
+        
+        // Use images from agent API
         if (data.annotated_image) {
           setOverlayImage(data.annotated_image)
-        } else if (data.overlay_with_legend) {
-          setOverlayImage(data.overlay_with_legend)
-        } else if (data.overlay_image) {
-          setOverlayImage(data.overlay_image)
         } else if (data.original_image) {
           setOverlayImage(data.original_image)
         }
       } else {
-        throw new Error('Segmentation failed')
+        throw new Error(data.error || 'Processing failed')
       }
     } catch (error) {
       console.error('Segmentation error:', error)
@@ -214,15 +230,22 @@ const LandingPage = () => {
                     )}
                     {segmentationResults && (
                       <div className="segmentation-stats">
-                        <div className="stat-badge handwritten">
-                          ✍️ Handwritten: {segmentationResults.handwritten_regions || 0}
+                        <div className="stat-badge" style={{background: 'rgba(102, 126, 234, 0.9)', color: 'white'}}>
+                          🤖 Agent: {segmentationResults.agent_used || 'OCRAgent'}
                         </div>
-                        <div className="stat-badge printed">
-                          🖨️ Printed: {(segmentationResults.total_regions || 0) - (segmentationResults.handwritten_regions || 0)}
-                        </div>
-                        <div className="stat-badge" style={{background: 'rgba(102, 126, 234, 0.9)', color: 'white', marginTop: '0.5rem'}}>
+                        {segmentationResults.total_regions > 0 && (
+                          <div className="stat-badge" style={{background: 'rgba(76, 175, 80, 0.9)', color: 'white'}}>
+                            📍 Regions: {segmentationResults.total_regions}
+                          </div>
+                        )}
+                        <div className="stat-badge" style={{background: 'rgba(255, 152, 0, 0.9)', color: 'white'}}>
                           📝 Text: {segmentationResults.extracted_text?.length || 0} chars
                         </div>
+                        {segmentationResults.tools_used && segmentationResults.tools_used.length > 0 && (
+                          <div className="stat-badge" style={{background: 'rgba(156, 39, 176, 0.9)', color: 'white', marginTop: '0.5rem', fontSize: '0.75rem'}}>
+                            🔧 Tools: {segmentationResults.tools_used.join(', ')}
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -280,24 +303,32 @@ const LandingPage = () => {
 
                     {/* PHI Redaction & NER Summary */}
                     <div className="phi-redaction-section">
-                      <h3>Redacted OCR (PHI removed)</h3>
+                      <h3>🔒 Redacted Text (PHI Filtered)</h3>
                       <div className="redacted-text">
-                        {extractedText || '(No text)'}
+                        {segmentationResults?.redacted_text || extractedText || '(No text)'}
                       </div>
 
-                      <h4>PHI Summary</h4>
+                      <h4>⚠️ PHI Entities Detected</h4>
                       {phiSummary && phiSummary.length > 0 ? (
-                        <div className="phi-list">
-                          {phiSummary.map((item, idx) => (
-                            <div key={idx} className="phi-item">
-                              <div className="phi-label">{item.label}</div>
-                              <div className="phi-sample">Sample: {item.sample}</div>
-                              <div className="phi-span">span: {item.start}-{item.end}</div>
-                            </div>
-                          ))}
-                        </div>
+                        <>
+                          <div className="phi-summary-stats">
+                            {segmentationResults?.phi_types && Object.entries(segmentationResults.phi_types).map(([type, count]) => (
+                              <span key={type} className="phi-type-badge">
+                                {type}: {count}
+                              </span>
+                            ))}
+                          </div>
+                          <div className="phi-list">
+                            {phiSummary.map((item, idx) => (
+                              <div key={idx} className="phi-item">
+                                <div className="phi-type">{item.type}</div>
+                                <div className="phi-original">Removed: {item.original}</div>
+                              </div>
+                            ))}
+                          </div>
+                        </>
                       ) : (
-                        <div className="no-phi">No PHI detected</div>
+                        <div className="no-phi">✅ No PHI detected</div>
                       )}
                     </div>
 
@@ -322,9 +353,9 @@ const LandingPage = () => {
                                 <h5>Original: {item.original_drug.name} {item.original_drug.dosage}</h5>
                                 
                                 {/* Show alternatives from database APIs if available */}
-                                {item.fda_info.alternatives && item.fda_info.alternatives.length > 0 && (
+                                {item.drug_info.alternatives && item.drug_info.alternatives.length > 0 && (
                                   <div className="alternatives-grid">
-                                    {item.fda_info.alternatives.slice(0, 5).map((alt, altIdx) => (
+                                    {item.drug_info.alternatives.slice(0, 5).map((alt, altIdx) => (
                                       <div key={altIdx} className="alternative-card">
                                         <div className="alt-generic">{alt.generic_name}</div>
                                         {alt.brand_names && alt.brand_names.length > 0 && (
@@ -338,11 +369,11 @@ const LandingPage = () => {
                                 )}
                                 
                                 {/* Show LLM response if available */}
-                                {item.fda_info.text_from_llm && (
+                                {item.drug_info.text_from_llm && (
                                   <div className="llm-response">
                                     <h6>🤖 Information from AI Assistant:</h6>
                                     <div className="llm-content">
-                                      {item.fda_info.text_from_llm}
+                                      {item.drug_info.text_from_llm}
                                     </div>
                                     <div className="llm-disclaimer">
                                       ⚠️ This information is AI-generated. Always consult a healthcare professional.
@@ -350,7 +381,7 @@ const LandingPage = () => {
                                   </div>
                                 )}
                                 
-                                <div className="source-badge">Source: {item.fda_info.source}</div>
+                                <div className="source-badge">Source: {item.drug_info.source}</div>
                               </div>
                             ))}
                           </div>
@@ -370,29 +401,36 @@ const LandingPage = () => {
                         {showMetadata && (
                           <div className="metadata-content">
                             <div className="metadata-item">
-                              <strong>Total Regions:</strong> {segmentationResults.total_regions || 0}
+                              <strong>🤖 Agent Used:</strong> {segmentationResults.agent_used || 'Unknown'}
                             </div>
+                            {segmentationResults.tools_used && segmentationResults.tools_used.length > 0 && (
+                              <div className="metadata-item">
+                                <strong>🔧 Tools Used:</strong> {segmentationResults.tools_used.join(', ')}
+                              </div>
+                            )}
+                            {segmentationResults.total_regions > 0 && (
+                              <div className="metadata-item">
+                                <strong>📍 Total Regions:</strong> {segmentationResults.total_regions}
+                              </div>
+                            )}
                             <div className="metadata-item">
-                              <strong>Handwritten Regions:</strong> {segmentationResults.handwritten_regions || 0}
+                              <strong>📝 Text Length:</strong> {extractedText.length} characters
                             </div>
-                            <div className="metadata-item">
-                              <strong>Printed Regions:</strong> {(segmentationResults.total_regions || 0) - (segmentationResults.handwritten_regions || 0)}
-                            </div>
-                            <div className="metadata-item">
-                              <strong>Text Length:</strong> {extractedText.length} characters
-                            </div>
-                            {segmentationResults.regions && segmentationResults.regions.length > 0 && (
-                              <div className="metadata-regions">
-                                <strong>Region Details:</strong>
-                                {segmentationResults.regions
-                                  .filter(region => region.type === 'handwritten' && region.text)
-                                  .map((region, index) => (
-                                    <div key={index} className="region-detail">
-                                      <div>Region {region.id + 1} (Handwritten):</div>
-                                      <div className="region-text">{region.text}</div>
-                                      <div className="region-area">Area: {region.area} pixels</div>
+                            {segmentationResults.phi_summary && segmentationResults.phi_summary.length > 0 && (
+                              <div className="metadata-item">
+                                <strong>⚠️ PHI Entities:</strong> {segmentationResults.phi_summary.length} found
+                              </div>
+                            )}
+                            {segmentationResults.phi_types && Object.keys(segmentationResults.phi_types).length > 0 && (
+                              <div className="metadata-item">
+                                <strong>🔒 PHI Types:</strong>
+                                <div style={{marginTop: '0.5rem'}}>
+                                  {Object.entries(segmentationResults.phi_types).map(([type, count]) => (
+                                    <div key={type} style={{marginLeft: '1rem'}}>
+                                      {type}: {count}
                                     </div>
                                   ))}
+                                </div>
                               </div>
                             )}
                           </div>

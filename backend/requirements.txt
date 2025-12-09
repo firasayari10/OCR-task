@@ -12,5 +12,5 @@ setuptools>=68.0.0
 wheel>=0.40.0
 python-dotenv>=1.0.0
 requests>=2.31.0
-huggingface-hub>=0.14.1
+huggingface-hub>=0.24.0,<1.0
 
