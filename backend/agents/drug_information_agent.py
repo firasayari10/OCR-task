@@ -30,9 +30,19 @@ class DrugInformationAgent(BaseAgent):
 2. Queries drug databases (RxNorm, FDA openFDA) for drug information
 3. Provides alternative medications and detailed drug information
 4. Uses LLaMA AI as fallback when databases have no information
+5. Checks local vector database of essential medications first
 
 You work with PHI-filtered text to protect patient privacy."""
         )
+        
+        # Initialize vector database
+        self.vector_db = None
+        try:
+            from medication_vector_db import MedicationVectorDB
+            self.vector_db = MedicationVectorDB()
+            logger.info(f"Vector DB loaded with {len(self.vector_db.metadata)} medications")
+        except Exception as e:
+            logger.warning(f"Could not load vector database: {e}")
         
         self._register_tools()
     
@@ -175,7 +185,12 @@ You work with PHI-filtered text to protect patient privacy."""
             dosage_match = re.search(r'(\d+(?:\.\d+)?\s*(?:mg|g|mcg|ml|units?|IU))', context, flags=re.IGNORECASE)
             dosage = dosage_match.group(1) if dosage_match else None
             
-            if not any(abs(med.get('start', -1000) - m.start()) < 10 for med in medications):
+            # Check if this medication is not a duplicate
+            def get_start_pos(med_dict: Dict) -> int:
+                start_val = med_dict.get('start', -1000)
+                return int(start_val) if isinstance(start_val, int) else -1000
+            
+            if not any(abs(get_start_pos(existing_med) - m.start()) < 10 for existing_med in medications):
                 medications.append({
                     'name': m.group(1).strip().lower(),
                     'dosage': dosage,
@@ -187,8 +202,11 @@ You work with PHI-filtered text to protect patient privacy."""
         # Deduplicate
         seen = set()
         unique_meds = []
-        for med in sorted(medications, key=lambda x: x['start']):
-            key = (med['name'], med['start'] // 10)
+        for med in sorted(medications, key=lambda x: get_start_pos(x) if x else 0):
+            # Safely handle start position
+            start_val = med.get('start', 0)
+            start_pos: int = int(start_val) if isinstance(start_val, int) else 0
+            key = (med['name'], start_pos // 10)
             if key not in seen:
                 seen.add(key)
                 unique_meds.append(med)
@@ -199,19 +217,85 @@ You work with PHI-filtered text to protect patient privacy."""
     def _query_drug_info_impl(self, drug_name: str, **kwargs) -> Dict:
         """Query drug databases for information and alternatives."""
         try:
-            # Try RxNorm API first (NIH, free, no key needed)
-            rxnorm_result = self._query_rxnorm(drug_name)
-            if rxnorm_result['found']:
-                return rxnorm_result
+            all_sources = []
+            vector_db_results = None
             
-            # Try FDA openFDA API
-            fda_result = self._query_fda(drug_name)
-            if fda_result['found']:
-                return fda_result
+            # Step 1: Always query vector database if available (essential medications)
+            if self.vector_db and len(self.vector_db.metadata) > 0:
+                logger.info(f"Querying vector database for: {drug_name}")
+                try:
+                    vector_results = self.vector_db.search_by_name(drug_name, top_k=5)
+                    
+                    if vector_results and vector_results[0]['similarity_score'] > 0.6:
+                        # Found in vector database
+                        logger.info(f"Found in vector DB: {vector_results[0]['name']} (score: {vector_results[0]['similarity_score']:.2f})")
+                        vector_db_results = self._format_vector_db_result(drug_name, vector_results)
+                        all_sources.append({
+                            'source': 'Essential Medications DB',
+                            'data': vector_db_results,
+                            'priority': 1
+                        })
+                        
+                        # If high confidence match, return immediately
+                        if vector_results[0]['similarity_score'] > 0.85:
+                            logger.info(f"High confidence match in vector DB, returning early")
+                            return vector_db_results
+                except Exception as e:
+                    logger.error(f"Vector DB query failed: {e}")
             
-            # Fallback to LLaMA
-            llama_result = self._query_llama(drug_name)
-            return llama_result
+            # Step 2: Query RxNorm API (always try, even if found in vector DB)
+            logger.info(f"Querying RxNorm API for: {drug_name}")
+            try:
+                rxnorm_result = self._query_rxnorm(drug_name)
+                if rxnorm_result['found']:
+                    logger.info(f"Found in RxNorm API")
+                    all_sources.append({
+                        'source': 'RxNorm (NIH)',
+                        'data': rxnorm_result,
+                        'priority': 2
+                    })
+            except Exception as e:
+                logger.error(f"RxNorm query failed: {e}")
+            
+            # Step 3: Query FDA openFDA API
+            logger.info(f"Querying FDA API for: {drug_name}")
+            try:
+                fda_result = self._query_fda(drug_name)
+                if fda_result['found']:
+                    logger.info(f"Found in FDA API")
+                    all_sources.append({
+                        'source': 'FDA openFDA',
+                        'data': fda_result,
+                        'priority': 3
+                    })
+            except Exception as e:
+                logger.error(f"FDA query failed: {e}")
+            
+            # Step 4: If nothing found, try LLaMA AI
+            if not all_sources:
+                logger.info(f"No results from databases, trying LLaMA AI")
+                try:
+                    llama_result = self._query_llama(drug_name)
+                    if llama_result.get('found') or llama_result.get('text_from_llm'):
+                        all_sources.append({
+                            'source': 'LLaMA AI',
+                            'data': llama_result,
+                            'priority': 4
+                        })
+                except Exception as e:
+                    logger.error(f"LLaMA query failed: {e}")
+            
+            # Combine results from all sources
+            if all_sources:
+                return self._combine_multi_source_results(drug_name, all_sources)
+            
+            # Nothing found anywhere
+            return {
+                'drug_name': drug_name,
+                'found': False,
+                'message': 'No information found in any database',
+                'sources_checked': ['Vector DB', 'RxNorm', 'FDA', 'LLaMA']
+            }
             
         except Exception as e:
             logger.error(f"Error querying drug APIs: {e}")
@@ -220,6 +304,84 @@ You work with PHI-filtered text to protect patient privacy."""
                 'found': False,
                 'error': str(e)
             }
+    
+    def _combine_multi_source_results(self, drug_name: str, sources: List[Dict]) -> Dict:
+        """Combine results from multiple sources into a unified response."""
+        # Sort by priority
+        sources.sort(key=lambda x: x['priority'])
+        
+        # Primary result (highest priority source)
+        primary = sources[0]['data']
+        
+        # Collect all alternatives from all sources
+        all_alternatives = []
+        seen_names = set()
+        
+        for src in sources:
+            data = src['data']
+            alts = data.get('alternatives', [])
+            
+            for alt in alts:
+                name = alt.get('generic_name', '').lower()
+                if name and name not in seen_names:
+                    alt['source'] = src['source']
+                    all_alternatives.append(alt)
+                    seen_names.add(name)
+        
+        # Build combined result
+        result = {
+            'drug_name': drug_name,
+            'found': True,
+            'primary_source': sources[0]['source'],
+            'sources_found': [s['source'] for s in sources],
+            'alternatives': all_alternatives[:15],  # Limit to top 15
+            'total_sources_checked': len(sources)
+        }
+        
+        # Include primary source specific data
+        if 'match_confidence' in primary:
+            result['match_confidence'] = primary['match_confidence']
+            result['matched_name'] = primary.get('matched_name')
+        
+        if 'category' in primary:
+            result['category'] = primary['category']
+        
+        if 'usage_type' in primary:
+            result['usage_type'] = primary['usage_type']
+        
+        if 'text_from_llm' in primary:
+            result['text_from_llm'] = primary['text_from_llm']
+        
+        return result
+    
+    def _format_vector_db_result(self, query_name: str, results: List[Dict]) -> Dict:
+        """Format vector database results."""
+        main_result = results[0]
+        
+        alternatives = []
+        for i, result in enumerate(results[:5], 1):
+            alternatives.append({
+                'generic_name': result['name'],
+                'brand_names': [],
+                'manufacturer': 'Various',
+                'indication': f"{result.get('category', 'Unknown category')} - {result.get('usage', 'Unknown usage')} medication",
+                'dosage': result.get('dosage', 'N/A'),
+                'forme': result.get('forme', 'N/A'),
+                'usage_type': result.get('usage', 'UNKNOWN'),
+                'similarity': result.get('similarity_score', 0),
+                'rank': i
+            })
+        
+        return {
+            'drug_name': query_name,
+            'found': True,
+            'alternatives': alternatives,
+            'source': 'Essential Medications Database (Local)',
+            'match_confidence': main_result['similarity_score'],
+            'matched_name': main_result['name'],
+            'category': main_result.get('category', 'Unknown'),
+            'usage_type': main_result.get('usage', 'UNKNOWN')
+        }
     
     def _query_rxnorm(self, drug_name: str) -> Dict:
         """Query RxNorm API for drug information."""

@@ -7,6 +7,7 @@ This module initializes all agents and tools for the OCR system.
 import logging
 import os
 from typing import Dict, Any, Optional
+from pathlib import Path
 import torch
 import numpy as np
 
@@ -33,6 +34,73 @@ from agents.tools import (
 logger = logging.getLogger(__name__)
 
 
+def download_sam2_if_needed() -> str:
+    """
+    Download SAM2 model from cloud storage if not present locally.
+    
+    Returns:
+        Path to SAM2 checkpoint file
+    """
+    sam2_path = Path("checkpoints/sam2_hiera_large.pt")
+    
+    # If file exists locally, use it
+    if sam2_path.exists():
+        logger.info(f"Using local SAM2 checkpoint: {sam2_path}")
+        return str(sam2_path)
+    
+    # Try to download from cloud
+    blob_url = os.getenv("SAM2_BLOB_URL")
+    hf_repo = os.getenv("SAM2_HF_REPO")
+    
+    if hf_repo:
+        # Download from HuggingFace Hub
+        try:
+            logger.info(f"Downloading SAM2 from HuggingFace Hub: {hf_repo}")
+            from huggingface_hub import hf_hub_download
+            
+            downloaded_path = hf_hub_download(
+                repo_id=hf_repo,
+                filename="sam2_hiera_large.pt",
+                cache_dir="checkpoints"
+            )
+            logger.info(f"✓ SAM2 downloaded to {downloaded_path}")
+            return downloaded_path
+        except Exception as e:
+            logger.warning(f"Failed to download from HF Hub: {e}")
+    
+    if blob_url:
+        # Download from Azure Blob or S3
+        try:
+            logger.info(f"Downloading SAM2 from cloud storage...")
+            sam2_path.parent.mkdir(parents=True, exist_ok=True)
+            
+            import requests
+            response = requests.get(blob_url, stream=True)
+            response.raise_for_status()
+            
+            total_size = int(response.headers.get('content-length', 0))
+            downloaded = 0
+            
+            with open(sam2_path, 'wb') as f:
+                for chunk in response.iter_content(chunk_size=8192):
+                    f.write(chunk)
+                    downloaded += len(chunk)
+                    if total_size > 0:
+                        percent = (downloaded / total_size) * 100
+                        if downloaded % (1024 * 1024 * 10) == 0:  # Log every 10MB
+                            logger.info(f"Download progress: {percent:.1f}%")
+            
+            logger.info(f"✓ SAM2 downloaded to {sam2_path}")
+            return str(sam2_path)
+        except Exception as e:
+            logger.error(f"Failed to download SAM2 from cloud: {e}")
+    
+    # Fallback: use default path (will fail if not present)
+    logger.warning("SAM2 not found and no download URL configured. Segmentation may fail.")
+    logger.warning("Set SAM2_BLOB_URL or SAM2_HF_REPO environment variable for production.")
+    return str(sam2_path)
+
+
 class AgentSystem:
     """
     Main agent system that initializes and manages all agents and tools.
@@ -54,13 +122,13 @@ class AgentSystem:
     
     async def initialize(
         self,
-        azure_endpoint: str = None,
-        azure_key: str = None,
-        hf_token: str = None,
+        azure_endpoint: Optional[str] = None,
+        azure_key: Optional[str] = None,
+        hf_token: Optional[str] = None,
         enable_sam2: bool = True,
         enable_trocr: bool = True,
-        sam2_checkpoint: str = None,
-        sam2_config: str = None
+        sam2_checkpoint: Optional[str] = None,
+        sam2_config: Optional[str] = None
     ):
         """
         Initialize the agent system with all components.
@@ -71,7 +139,7 @@ class AgentSystem:
             hf_token: HuggingFace API token
             enable_sam2: Whether to enable SAM2 segmentation
             enable_trocr: Whether to enable TrOCR
-            sam2_checkpoint: Path to SAM2 checkpoint
+            sam2_checkpoint: Path to SAM2 checkpoint (auto-downloads if not provided)
             sam2_config: Path to SAM2 config
         """
         if self._initialized:
@@ -79,6 +147,10 @@ class AgentSystem:
             return
         
         logger.info("Initializing agent system...")
+        
+        # Download SAM2 if needed (production mode)
+        if enable_sam2 and not sam2_checkpoint:
+            sam2_checkpoint = download_sam2_if_needed()
         
         # Create agents
         self.orchestrator = OrchestratorAgent()
@@ -137,11 +209,11 @@ class AgentSystem:
                 logger.info("Loading TrOCR model...")
                 from transformers import TrOCRProcessor, VisionEncoderDecoderModel, pipeline
                 
-                device = 0 if torch.cuda.is_available() else -1
+                trocr_device: int = 0 if torch.cuda.is_available() else -1
                 self.trocr_pipeline = pipeline(
                     "image-to-text",
                     model="microsoft/trocr-large-handwritten",
-                    device=device
+                    device=trocr_device
                 )
                 
                 logger.info("TrOCR model loaded successfully")
@@ -169,39 +241,46 @@ class AgentSystem:
     
     def _register_tools(
         self,
-        azure_endpoint: str,
-        azure_key: str,
-        hf_token: str,
+        azure_endpoint: Optional[str],
+        azure_key: Optional[str],
+        hf_token: Optional[str],
         enable_sam2: bool,
         enable_trocr: bool
     ):
         """Register all tools with appropriate agents."""
         
         # Segmentation tools
-        if enable_sam2:
+        if enable_sam2 and self.sam2_mask_generator:
             sam2_tool = create_sam2_segmentation_tool(self.sam2_mask_generator)
-            self.segmentation_agent.register_tool(sam2_tool)
+            if self.segmentation_agent:
+                self.segmentation_agent.register_tool(sam2_tool)
         
         extract_tool = create_region_extraction_tool()
-        self.segmentation_agent.register_tool(extract_tool)
+        if self.segmentation_agent:
+            self.segmentation_agent.register_tool(extract_tool)
         
         # Text recognition tools
         if azure_endpoint and azure_key:
             azure_tool = create_azure_vision_ocr_tool(azure_endpoint, azure_key)
-            self.text_recognition_agent.register_tool(azure_tool)
+            if self.text_recognition_agent:
+                self.text_recognition_agent.register_tool(azure_tool)
         
-        if enable_trocr:
+        if enable_trocr and self.trocr_pipeline:
             trocr_tool = create_trocr_tool(self.trocr_pipeline)
-            self.text_recognition_agent.register_tool(trocr_tool)
+            if self.text_recognition_agent:
+                self.text_recognition_agent.register_tool(trocr_tool)
         
         # PHI filtering tools
         phi_tool = create_phi_filter_tool(hf_token)
-        self.phi_filter_agent.register_tool(phi_tool)
+        if self.phi_filter_agent:
+            self.phi_filter_agent.register_tool(phi_tool)
         
         # Image preprocessing (shared)
         preprocess_tool = create_image_preprocessing_tool()
-        self.segmentation_agent.register_tool(preprocess_tool)
-        self.text_recognition_agent.register_tool(preprocess_tool)
+        if self.segmentation_agent:
+            self.segmentation_agent.register_tool(preprocess_tool)
+        if self.text_recognition_agent:
+            self.text_recognition_agent.register_tool(preprocess_tool)
         
         logger.info("Tools registered successfully")
     
@@ -261,6 +340,9 @@ class AgentSystem:
         if not self._initialized:
             raise RuntimeError("Agent system not initialized. Call initialize() first.")
         
+        if not self.orchestrator:
+            raise RuntimeError("Orchestrator not available")
+        
         context = {
             "image": image,
             "mode": mode,
@@ -278,7 +360,7 @@ class AgentSystem:
     
     def get_status(self) -> Dict[str, Any]:
         """Get system status and capabilities."""
-        if not self._initialized:
+        if not self._initialized or not self.orchestrator:
             return {"initialized": False}
         
         return {
@@ -303,12 +385,13 @@ async def get_agent_system() -> AgentSystem:
         _agent_system = AgentSystem()
         
         # Initialize with environment variables
+        # TrOCR disabled - using Azure Vision API for OCR instead
         await _agent_system.initialize(
             azure_endpoint=os.getenv('AZURE_VISION_ENDPOINT'),
             azure_key=os.getenv('AZURE_VISION_KEY'),
             hf_token=os.getenv('HF_TOKEN'),
             enable_sam2=True,
-            enable_trocr=True
+            enable_trocr=False  # Disabled - using Azure Vision API
         )
     
     return _agent_system

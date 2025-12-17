@@ -146,10 +146,16 @@ Final Response to UI
 ### 6. **DrugInformationAgent**
 - **Purpose**: Extracts medications and queries drug databases
 - **Tools**:
+  - **FAISS Vector Database** - Local database of 106 essential medications with semantic search
   - **Medication Extractor** - Regex-based pattern matching
   - **RxNorm API** - NIH drug database (free, international)
   - **FDA openFDA API** - US FDA drug labels database
   - **LLaMA AI** - AI-powered fallback for unknown drugs
+- **Query Priority**:
+  1. **Vector Database** (local, 10ms response time)
+  2. **RxNorm API** (NIH, international coverage)
+  3. **FDA openFDA** (US drug labels)
+  4. **LLaMA AI** (AI-generated fallback)
 - **Extraction Patterns**:
   - `Tab. Augmentin 625mg`
   - `Cap. Amoxicillin 500mg`
@@ -157,10 +163,11 @@ Final Response to UI
   - 100+ common medication names
 - **Output**: 
   - Medication list (name + dosage)
-  - Drug alternatives with generic/brand names
+  - Drug alternatives from multiple sources
   - Manufacturer information
   - Indications and usage
-  - AI-generated information for unknown drugs
+  - Category and usage classification
+  - Multi-source information combining all databases
 
 ---
 
@@ -172,6 +179,7 @@ Final Response to UI
 - **OCR**: Azure Vision API
 - **Segmentation**: SAM2 (Meta AI) + OpenCV fallback
 - **NLP**: HuggingFace Transformers (NER models)
+- **Vector Database**: FAISS + SentenceTransformers (all-MiniLM-L6-v2)
 - **Drug APIs**: RxNorm (NIH), openFDA, HuggingFace LLaMA
 - **Image Processing**: OpenCV, NumPy, PIL
 
@@ -187,6 +195,7 @@ Final Response to UI
 - **FDA openFDA API** - US drug labels
 - **HuggingFace Inference API** - NER and LLaMA
 - **Meta SAM2** - Image segmentation
+- **FAISS Vector Database** - Local medication database (106 drugs)
 
 ---
 
@@ -200,6 +209,9 @@ ocr/
 │   ├── main.py                      # Legacy API (reference)
 │   ├── requirements.txt             # Python dependencies
 │   ├── .env                         # Configuration (keys, tokens)
+│   ├── drugs.json                   # Essential medications dataset (106 drugs)
+│   ├── load_drugs_json.py           # Load medications into vector DB
+│   ├── medication_vector_db.py      # Vector database implementation
 │   ├── agents/                      # Agent implementations
 │   │   ├── __init__.py
 │   │   ├── base_agent.py           # Base agent class
@@ -210,6 +222,9 @@ ocr/
 │   │   ├── phi_filter_agent.py     # PHI detection/redaction
 │   │   ├── drug_information_agent.py # Medication extraction
 │   │   └── tools.py                # Tool implementations
+│   ├── medication_db/               # Vector database storage
+│   │   ├── faiss_index.bin         # FAISS vector index
+│   │   └── metadata.json           # Medication metadata
 │   ├── checkpoints/                 # Model checkpoints
 │   │   └── sam2_hiera_large.pt     # SAM2 model (900MB)
 │   └── segment-anything-2/          # SAM2 library
@@ -246,19 +261,27 @@ cd backend
 pip install -r requirements.txt
 ```
 
-2. **Install SAM2** (optional, for advanced segmentation):
+2. **Build Vector Database** (essential medications):
+```bash
+# Load 106 essential medications from drugs.json into vector database
+python load_drugs_json.py drugs.json
+```
+
+This creates a FAISS vector database in `medication_db/` with semantic search capabilities.
+
+3. **Install SAM2** (optional, for advanced segmentation):
 ```bash
 cd segment-anything-2
 pip install -e .
 ```
 
-3. **Download SAM2 checkpoint** (optional):
+4. **Download SAM2 checkpoint** (optional):
 ```bash
 cd ..
 python download_sam2_checkpoint.py
 ```
 
-4. **Configure environment variables** (`.env` file):
+5. **Configure environment variables** (`.env` file):
 ```env
 # Azure Vision API (Required)
 AZURE_VISION_ENDPOINT=https://your-resource.cognitiveservices.azure.com/
@@ -268,7 +291,7 @@ AZURE_VISION_KEY=your_azure_key
 HF_TOKEN=your_huggingface_token
 ```
 
-5. **Start the agent API server**:
+6. **Start the agent API server**:
 ```bash
 python main_agent_api.py
 ```

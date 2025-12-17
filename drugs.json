@@ -1,0 +1,875 @@
+[
+  {
+    "name": "Paracetamol",
+    "generic": "Acetaminophen",
+    "class": "Analgesic, antipyretic",
+    "common_uses": ["Mild to moderate pain", "Fever"],
+    "precautions_contraindications": ["Severe liver disease", "Chronic heavy alcohol use"],
+    "common_side_effects": ["Liver toxicity in overdose", "Rash (rare)"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Ibuprofen",
+    "generic": "Ibuprofen",
+    "class": "NSAID",
+    "common_uses": ["Pain", "Inflammation", "Fever"],
+    "precautions_contraindications": ["Active peptic ulcer", "Severe renal impairment", "Late pregnancy"],
+    "common_side_effects": ["Gastric irritation", "Bleeding risk", "Renal effects"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Aspirin",
+    "generic": "Acetylsalicylic acid",
+    "class": "NSAID, antiplatelet",
+    "common_uses": ["Analgesia", "Antiplatelet for cardiovascular prevention"],
+    "precautions_contraindications": ["Active bleeding", "Children with viral illness (Reye)"],
+    "common_side_effects": ["Bleeding", "Gastric ulceration", "Tinnitus at high doses"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Amoxicillin",
+    "generic": "Amoxicillin",
+    "class": "Beta-lactam antibiotic (penicillin)",
+    "common_uses": ["ENT infections", "Respiratory infections", "UTIs", "Dental infections"],
+    "precautions_contraindications": ["Penicillin allergy"],
+    "common_side_effects": ["Rash", "Diarrhea", "Allergic reactions"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Ciprofloxacin",
+    "generic": "Ciprofloxacin",
+    "class": "Fluoroquinolone antibiotic",
+    "common_uses": ["UTIs", "Certain GI and respiratory infections"],
+    "precautions_contraindications": ["Tendon disorders history", "Pregnancy (avoid)"],
+    "common_side_effects": ["Tendonitis/rupture risk", "Nausea", "Dizziness"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Doxycycline",
+    "generic": "Doxycycline",
+    "class": "Tetracycline antibiotic",
+    "common_uses": ["Acne", "Respiratory infections", "STIs", "Certain vector-borne infections"],
+    "precautions_contraindications": ["Pregnancy", "Children <8 years (teeth discoloration)"],
+    "common_side_effects": ["Photosensitivity", "GI upset"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Azithromycin",
+    "generic": "Azithromycin",
+    "class": "Macrolide antibiotic",
+    "common_uses": ["Respiratory infections", "Certain STIs"],
+    "precautions_contraindications": ["History of QT prolongation", "Concurrent QT-prolonging drugs"],
+    "common_side_effects": ["GI upset", "Rare cardiac arrhythmia"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Ceftriaxone",
+    "generic": "Ceftriaxone",
+    "class": "3rd-generation cephalosporin antibiotic",
+    "common_uses": ["Severe bacterial infections", "Meningitis", "Sepsis", "Community-acquired pneumonia"],
+    "precautions_contraindications": ["Neonates with hyperbilirubinemia (caution)", "Allergy to cephalosporins"],
+    "common_side_effects": ["Injection site pain", "Diarrhea", "Allergic reactions"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Metronidazole",
+    "generic": "Metronidazole",
+    "class": "Nitroimidazole antimicrobial/antiprotozoal",
+    "common_uses": ["Anaerobic infections", "Certain STIs (trichomonas)", "Giardiasis"],
+    "precautions_contraindications": ["Avoid alcohol during treatment", "Caution in first trimester pregnancy when possible"],
+    "common_side_effects": ["Metallic taste", "Nausea", "Neuropathy with long use"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Nitrofurantoin",
+    "generic": "Nitrofurantoin",
+    "class": "Urinary tract antibiotic",
+    "common_uses": ["Uncomplicated UTIs"],
+    "precautions_contraindications": ["Significant renal impairment", "Late pregnancy (some formulations)"],
+    "common_side_effects": ["Nausea", "Urine discoloration", "Pulmonary reactions (rare)"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Clindamycin",
+    "generic": "Clindamycin",
+    "class": "Lincosamide antibiotic",
+    "common_uses": ["Skin and soft tissue infections", "Anaerobic infections", "Bone infections"],
+    "precautions_contraindications": ["History of colitis or C. difficile infection"],
+    "common_side_effects": ["Diarrhea", "Risk of C. difficile colitis"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Amoxicillin + Clavulanic acid",
+    "generic": "Amoxicillin/clavulanate",
+    "class": "Beta-lactam antibiotic with beta-lactamase inhibitor",
+    "common_uses": ["Respiratory infections", "Skin infections", "Bite wounds"],
+    "precautions_contraindications": ["Penicillin allergy"],
+    "common_side_effects": ["Diarrhea", "Hepatotoxicity (rare)"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Isoniazid",
+    "generic": "Isoniazid",
+    "class": "Antitubercular agent",
+    "common_uses": ["Tuberculosis treatment (part of combination)"],
+    "precautions_contraindications": ["Severe hepatic disease", "Monitor LFTs"],
+    "common_side_effects": ["Hepatotoxicity", "Peripheral neuropathy (prevent with pyridoxine)"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Rifampicin",
+    "generic": "Rifampicin",
+    "class": "Antitubercular antibiotic (rifamycin)",
+    "common_uses": ["Part of TB treatment regimens", "Some prosthetic device infections (combination)"],
+    "precautions_contraindications": ["Drug interactions (CYP inducer)", "Hepatic impairment"],
+    "common_side_effects": ["Orange discoloration of body fluids", "Hepatotoxicity"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Sofosbuvir",
+    "generic": "Sofosbuvir",
+    "class": "Antiviral (HCV NS5B polymerase inhibitor)",
+    "common_uses": ["Hepatitis C treatment (in combinations)"],
+    "precautions_contraindications": ["Use with caution in severe hepatic impairment", "Drug interactions"],
+    "common_side_effects": ["Fatigue", "Headache", "Nausea"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Daclatasvir",
+    "generic": "Daclatasvir",
+    "class": "Antiviral (HCV NS5A inhibitor)",
+    "common_uses": ["Hepatitis C treatment (in combinations)"],
+    "precautions_contraindications": ["Drug interactions", "Dose adjust with certain CYP modulators"],
+    "common_side_effects": ["Fatigue", "Headache"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Tenofovir disoproxil fumarate",
+    "generic": "Tenofovir DF",
+    "class": "Antiretroviral (Nucleotide reverse transcriptase inhibitor)",
+    "common_uses": ["HIV treatment", "HBV treatment in some contexts"],
+    "precautions_contraindications": ["Renal impairment (monitor)", "Bone density issues long-term"],
+    "common_side_effects": ["Renal toxicity (rare)", "Reduced bone mineral density"],
+    "listed_in_tunisia_neml": false
+  },
+  {
+    "name": "Lamivudine",
+    "generic": "Lamivudine",
+    "class": "Antiretroviral (NRTI)",
+    "common_uses": ["HIV treatment (combination)", "HBV suppression"],
+    "precautions_contraindications": ["Lactic acidosis (rare)"],
+    "common_side_effects": ["Nausea", "Headache"],
+    "listed_in_tunisia_neml": false
+  },
+  {
+    "name": "Efavirenz",
+    "generic": "Efavirenz",
+    "class": "Antiretroviral (NNRTI)",
+    "common_uses": ["HIV treatment (part of combination regimens)"],
+    "precautions_contraindications": ["Psychiatric history caution", "Pregnancy considerations"],
+    "common_side_effects": ["CNS effects: vivid dreams, dizziness"],
+    "listed_in_tunisia_neml": false
+  },
+  {
+    "name": "Metformin",
+    "generic": "Metformin",
+    "class": "Antidiabetic (biguanide)",
+    "common_uses": ["Type 2 diabetes mellitus"],
+    "precautions_contraindications": ["Severe renal impairment", "Acute metabolic acidosis"],
+    "common_side_effects": ["GI upset", "Rare lactic acidosis"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Insulin (Human, short-acting)",
+    "generic": "Regular human insulin",
+    "class": "Insulin (short-acting)",
+    "common_uses": ["Type 1 diabetes", "Acute hyperglycaemia"],
+    "precautions_contraindications": ["Hypoglycemia risk"],
+    "common_side_effects": ["Hypoglycemia", "Injection site reactions"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Insulin Glargine",
+    "generic": "Insulin glargine",
+    "class": "Long-acting insulin analog",
+    "common_uses": ["Basal insulin for Type 1 and 2 diabetes"],
+    "precautions_contraindications": ["Hypoglycemia risk"],
+    "common_side_effects": ["Hypoglycemia", "Weight gain"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Levothyroxine",
+    "generic": "Levothyroxine sodium",
+    "class": "Thyroid hormone replacement",
+    "common_uses": ["Hypothyroidism"],
+    "precautions_contraindications": ["Untreated thyrotoxicosis", "Acute MI (caution)"],
+    "common_side_effects": ["Palpitations (overreplacement)", "Tremor"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Omeprazole",
+    "generic": "Omeprazole",
+    "class": "Proton pump inhibitor",
+    "common_uses": ["GERD", "Peptic ulcer disease", "H. pylori regimens"],
+    "precautions_contraindications": ["Long-term use risks (B12 deficiency, hypomagnesemia)"],
+    "common_side_effects": ["Headache", "GI upset"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Pantoprazole",
+    "generic": "Pantoprazole",
+    "class": "Proton pump inhibitor",
+    "common_uses": ["Acid-related disorders"],
+    "precautions_contraindications": ["Hypersensitivity"],
+    "common_side_effects": ["Headache", "Diarrhea"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Lisinopril",
+    "generic": "Lisinopril",
+    "class": "ACE inhibitor",
+    "common_uses": ["Hypertension", "Heart failure", "Post-MI"],
+    "precautions_contraindications": ["Pregnancy (contraindicated)", "History of angioedema"],
+    "common_side_effects": ["Dry cough", "Hyperkalemia"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Losartan",
+    "generic": "Losartan",
+    "class": "Angiotensin II receptor blocker (ARB)",
+    "common_uses": ["Hypertension", "Diabetic nephropathy (kidney protection)"],
+    "precautions_contraindications": ["Pregnancy (contraindicated)"],
+    "common_side_effects": ["Dizziness", "Hyperkalemia"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Amlodipine",
+    "generic": "Amlodipine",
+    "class": "Calcium channel blocker (dihydropyridine)",
+    "common_uses": ["Hypertension", "Angina"],
+    "precautions_contraindications": ["Severe hypotension"],
+    "common_side_effects": ["Peripheral edema", "Flushing"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Metoprolol",
+    "generic": "Metoprolol",
+    "class": "Beta-blocker (beta-1 selective)",
+    "common_uses": ["Hypertension", "Angina", "Arrhythmias"],
+    "precautions_contraindications": ["Severe asthma/COPD (caution)"],
+    "common_side_effects": ["Fatigue", "Bradycardia"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Furosemide",
+    "generic": "Furosemide",
+    "class": "Loop diuretic",
+    "common_uses": ["Edema from heart/renal/hepatic failure", "Hypertension (adjunct)"],
+    "precautions_contraindications": ["Electrolyte imbalance", "Dehydration"],
+    "common_side_effects": ["Hypokalemia", "Dehydration", "Ototoxicity (high doses)"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Spironolactone",
+    "generic": "Spironolactone",
+    "class": "Potassium-sparing diuretic, aldosterone antagonist",
+    "common_uses": ["Heart failure", "Resistant hypertension", "Hyperaldosteronism"],
+    "precautions_contraindications": ["Hyperkalemia", "Severe renal impairment", "Pregnancy caution"],
+    "common_side_effects": ["Hyperkalemia", "Gynecomastia"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Simvastatin",
+    "generic": "Simvastatin",
+    "class": "Statin (HMG-CoA reductase inhibitor)",
+    "common_uses": ["Hyperlipidemia", "Cardiovascular risk reduction"],
+    "precautions_contraindications": ["Active liver disease", "Pregnancy"],
+    "common_side_effects": ["Myalgia", "Liver enzyme elevation"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Atorvastatin",
+    "generic": "Atorvastatin",
+    "class": "Statin",
+    "common_uses": ["Hyperlipidemia"],
+    "precautions_contraindications": ["Liver disease", "Pregnancy"],
+    "common_side_effects": ["Muscle pain", "GI symptoms"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Clopidogrel",
+    "generic": "Clopidogrel",
+    "class": "Antiplatelet (P2Y12 inhibitor)",
+    "common_uses": ["Prevention of atherothrombotic events", "After stent placement"],
+    "precautions_contraindications": ["Active bleeding"],
+    "common_side_effects": ["Bleeding", "Bruising"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Warfarin",
+    "generic": "Warfarin",
+    "class": "Vitamin K antagonist anticoagulant",
+    "common_uses": ["Atrial fibrillation stroke prevention", "Venous thrombosis"],
+    "precautions_contraindications": ["Pregnancy (teratogenic)", "High bleeding risk"],
+    "common_side_effects": ["Bleeding", "Numerous drug/food interactions"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Rivaroxaban",
+    "generic": "Rivaroxaban",
+    "class": "Direct oral anticoagulant (Factor Xa inhibitor)",
+    "common_uses": ["DVT/PE treatment and prevention", "Stroke prevention in non-valvular AF"],
+    "precautions_contraindications": ["Active bleeding", "Severe renal impairment (dose adjust)"],
+    "common_side_effects": ["Bleeding"],
+    "listed_in_tunisia_neml": false
+  },
+  {
+    "name": "Paroxetine",
+    "generic": "Paroxetine",
+    "class": "SSRI antidepressant",
+    "common_uses": ["Depression", "Anxiety disorders", "OCD"],
+    "precautions_contraindications": ["MAOI use", "Pregnancy caution"],
+    "common_side_effects": ["Sexual dysfunction", "Nausea", "Weight changes"],
+    "listed_in_tunisia_neml": false
+  },
+  {
+    "name": "Sertraline",
+    "generic": "Sertraline",
+    "class": "SSRI",
+    "common_uses": ["Depression", "Anxiety", "OCD", "PTSD"],
+    "precautions_contraindications": ["MAOI interactions"],
+    "common_side_effects": ["Nausea", "Insomnia", "Sexual dysfunction"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Fluoxetine",
+    "generic": "Fluoxetine",
+    "class": "SSRI",
+    "common_uses": ["Depression", "OCD", "Panic disorder"],
+    "precautions_contraindications": ["MAOI interactions"],
+    "common_side_effects": ["Insomnia", "GI upset", "Activation in some patients"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Diazepam",
+    "generic": "Diazepam",
+    "class": "Benzodiazepine",
+    "common_uses": ["Anxiety", "Seizures", "Muscle spasm", "Sedation"],
+    "precautions_contraindications": ["Respiratory depression", "Substance misuse risk"],
+    "common_side_effects": ["Sedation", "Dependence and withdrawal risk"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Lorazepam",
+    "generic": "Lorazepam",
+    "class": "Benzodiazepine",
+    "common_uses": ["Anxiety", "Status epilepticus (IV)"],
+    "precautions_contraindications": ["Respiratory depression", "Elderly caution"],
+    "common_side_effects": ["Sedation", "Dependence risk"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Tramadol",
+    "generic": "Tramadol",
+    "class": "Opioid analgesic (atypical)",
+    "common_uses": ["Moderate pain"],
+    "precautions_contraindications": ["Seizure disorder (caution)", "Concurrent MAOI/serotonergic drugs"],
+    "common_side_effects": ["Dizziness", "Nausea", "Dependence potential"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Morphine (oral/injectable)",
+    "generic": "Morphine sulfate",
+    "class": "Opioid analgesic",
+    "common_uses": ["Severe pain", "Palliative care"],
+    "precautions_contraindications": ["Respiratory depression", "Acute asthma"],
+    "common_side_effects": ["Respiratory depression", "Constipation", "Sedation"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Codeine",
+    "generic": "Codeine",
+    "class": "Opioid analgesic/antitussive",
+    "common_uses": ["Mild-moderate pain", "Cough suppression"],
+    "precautions_contraindications": ["Children post-tonsillectomy/adenoidectomy (contraindicated)", "Poor CYP2D6 metabolizers/ultra-rapid metabolizers caution"],
+    "common_side_effects": ["Drowsiness", "Constipation", "Nausea"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Ondansetron",
+    "generic": "Ondansetron",
+    "class": "Antiemetic (5-HT3 antagonist)",
+    "common_uses": ["Nausea and vomiting from chemotherapy, post-op", "Severe gastroenteritis (symptomatic)"],
+    "precautions_contraindications": ["QT prolongation risk"],
+    "common_side_effects": ["Constipation", "Headache"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Metoclopramide",
+    "generic": "Metoclopramide",
+    "class": "Prokinetic/antiemetic",
+    "common_uses": ["Nausea/vomiting", "Gastroparesis"],
+    "precautions_contraindications": ["Parkinson's disease", "Extrapyramidal reactions risk"],
+    "common_side_effects": ["Drowsiness", "Extrapyramidal symptoms (especially in young)"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Cetirizine",
+    "generic": "Cetirizine",
+    "class": "Second-generation antihistamine",
+    "common_uses": ["Allergic rhinitis", "Urticaria"],
+    "precautions_contraindications": ["Severe renal impairment dose adjust"],
+    "common_side_effects": ["Mild drowsiness", "Dry mouth"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Loratadine",
+    "generic": "Loratadine",
+    "class": "Second-generation antihistamine",
+    "common_uses": ["Allergic rhinitis", "Urticaria"],
+    "precautions_contraindications": ["Severe hepatic impairment caution"],
+    "common_side_effects": ["Mild headache"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Montelukast",
+    "generic": "Montelukast",
+    "class": "Leukotriene receptor antagonist",
+    "common_uses": ["Asthma control", "Allergic rhinitis (adjunct)"],
+    "precautions_contraindications": ["Neuropsychiatric adverse events history caution"],
+    "common_side_effects": ["Headache", "Rare mood changes"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Salbutamol (Albuterol)",
+    "generic": "Salbutamol / Albuterol",
+    "class": "Short-acting beta-2 agonist bronchodilator",
+    "common_uses": ["Acute asthma relief", "COPD rescue"],
+    "precautions_contraindications": ["Severe cardiac disease caution"],
+    "common_side_effects": ["Tremor", "Palpitations"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Budesonide (inhaled)",
+    "generic": "Budesonide",
+    "class": "Inhaled corticosteroid",
+    "common_uses": ["Chronic asthma control"],
+    "precautions_contraindications": ["Acute severe asthma (use with controller)"],
+    "common_side_effects": ["Oral thrush", "Hoarseness"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Prednisone",
+    "generic": "Prednisone",
+    "class": "Systemic corticosteroid",
+    "common_uses": ["Inflammatory conditions", "Autoimmune flares", "Severe asthma exacerbations"],
+    "precautions_contraindications": ["Systemic infection", "Long-term adverse effects (osteoporosis, hyperglycemia)"],
+    "common_side_effects": ["Weight gain", "Mood changes", "Hyperglycemia"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Hydroxychloroquine",
+    "generic": "Hydroxychloroquine",
+    "class": "Antimalarial, immunomodulator",
+    "common_uses": ["Rheumatoid arthritis", "Systemic lupus erythematosus", "Some malaria prevention/treatment historically"],
+    "precautions_contraindications": ["Retinopathy risk (monitoring)"],
+    "common_side_effects": ["Vision changes (rare)", "GI upset"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Allopurinol",
+    "generic": "Allopurinol",
+    "class": "Xanthine oxidase inhibitor (gout)",
+    "common_uses": ["Gout prophylaxis", "Hyperuricemia"],
+    "precautions_contraindications": ["Severe renal impairment dose adjust", "Hypersensitivity reactions (rare but serious)"],
+    "common_side_effects": ["Skin rash", "GI upset"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Amiodarone",
+    "generic": "Amiodarone",
+    "class": "Antiarrhythmic (Class III)",
+    "common_uses": ["Supraventricular and ventricular arrhythmias refractory to other therapy"],
+    "precautions_contraindications": ["Thyroid disease caution", "Pulmonary toxicity risk; many drug interactions"],
+    "common_side_effects": ["Thyroid dysfunction", "Pulmonary fibrosis (rare)", "Skin photosensitivity"],
+    "listed_in_tunisia_neml": false
+  },
+  {
+    "name": "Gabapentin",
+    "generic": "Gabapentin",
+    "class": "Anticonvulsant, neuropathic pain agent",
+    "common_uses": ["Neuropathic pain", "Adjunct in seizures"],
+    "precautions_contraindications": ["Renal impairment dose adjust"],
+    "common_side_effects": ["Drowsiness", "Dizziness", "Weight gain"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Pregabalin",
+    "generic": "Pregabalin",
+    "class": "Neuropathic pain agent",
+    "common_uses": ["Neuropathic pain", "Fibromyalgia", "Adjunct epilepsy"],
+    "precautions_contraindications": ["Renal dose adjust", "Caution with dependence"],
+    "common_side_effects": ["Dizziness", "Somnolence", "Weight gain"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Hydrochlorothiazide",
+    "generic": "Hydrochlorothiazide",
+    "class": "Thiazide diuretic",
+    "common_uses": ["Hypertension", "Mild edema"],
+    "precautions_contraindications": ["Gout (can raise uric acid)", "Electrolyte disturbances"],
+    "common_side_effects": ["Hypokalemia", "Hyperuricemia"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Nitroglycerin (sublingual)",
+    "generic": "Glyceryl trinitrate",
+    "class": "Nitrate vasodilator",
+    "common_uses": ["Acute angina relief"],
+    "precautions_contraindications": ["Concurrent PDE5 inhibitors (severe hypotension)"],
+    "common_side_effects": ["Headache", "Hypotension"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Tamsulosin",
+    "generic": "Tamsulosin",
+    "class": "Alpha-1 blocker",
+    "common_uses": ["Lower urinary tract symptoms due to BPH"],
+    "precautions_contraindications": ["Orthostatic hypotension risk"],
+    "common_side_effects": ["Dizziness", "Ejaculation disorders"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Finasteride",
+    "generic": "Finasteride",
+    "class": "5-alpha reductase inhibitor",
+    "common_uses": ["Benign prostatic hyperplasia", "Androgenic alopecia (male)"],
+    "precautions_contraindications": ["Pregnancy (women should not handle crushed tablets)"],
+    "common_side_effects": ["Sexual dysfunction", "Decreased libido"],
+    "listed_in_tunisia_neml": false
+  },
+  {
+    "name": "Aciclovir",
+    "generic": "Acyclovir",
+    "class": "Antiviral (herpesvirus)",
+    "common_uses": ["Herpes simplex and varicella-zoster infections"],
+    "precautions_contraindications": ["Renal impairment dose adjust"],
+    "common_side_effects": ["Nausea", "Headache", "Renal toxicity (rare with IV)"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Valaciclovir",
+    "generic": "Valacyclovir",
+    "class": "Antiviral (herpesvirus)",
+    "common_uses": ["Herpes zoster and simplex"],
+    "precautions_contraindications": ["Renal impairment dose adjust"],
+    "common_side_effects": ["Nausea", "Headache"],
+    "listed_in_tunisia_neml": false
+  },
+  {
+    "name": "Hydrocortisone (topical/systemic)",
+    "generic": "Hydrocortisone",
+    "class": "Corticosteroid",
+    "common_uses": ["Dermatologic inflammations (topical)", "Adrenal insufficiency (systemic)"],
+    "precautions_contraindications": ["Systemic infection (if systemic use without coverage)", "Long-term topical use risk skin atrophy"],
+    "common_side_effects": ["Skin thinning (topical long-term)", "Metabolic effects (systemic)"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Fluconazole",
+    "generic": "Fluconazole",
+    "class": "Azole antifungal",
+    "common_uses": ["Oropharyngeal/esophageal candidiasis", "Vaginal candidiasis", "Systemic fungal infections (selected)"],
+    "precautions_contraindications": ["Liver dysfunction (monitor)"],
+    "common_side_effects": ["GI upset", "Headache", "Hepatotoxicity (rare)"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Naproxen",
+    "generic": "Naproxen",
+    "class": "NSAID",
+    "common_uses": ["Pain", "Inflammation", "Dysmenorrhea"],
+    "precautions_contraindications": ["Active peptic ulcer", "Renal impairment"],
+    "common_side_effects": ["Gastric upset", "Increased bleeding risk"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Celecoxib",
+    "generic": "Celecoxib",
+    "class": "COX-2 selective NSAID",
+    "common_uses": ["Osteoarthritic and inflammatory pain with lower GI risk than nonselective NSAIDs"],
+    "precautions_contraindications": ["Cardiovascular risk caution", "Sulfa allergy (caution)"],
+    "common_side_effects": ["GI effects", "Cardiovascular risk (dose/duration dependent)"],
+    "listed_in_tunisia_neml": false
+  },
+  {
+    "name": "Diphenhydramine",
+    "generic": "Diphenhydramine",
+    "class": "First-generation antihistamine",
+    "common_uses": ["Allergic reactions", "Insomnia (short-term)", "Motion sickness"],
+    "precautions_contraindications": ["Elderly caution (anticholinergic effects)"],
+    "common_side_effects": ["Drowsiness", "Dry mouth", "Urinary retention"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Melatonin",
+    "generic": "Melatonin",
+    "class": "Hormone (sleep regulator)",
+    "common_uses": ["Insomnia", "Jet lag"],
+    "precautions_contraindications": ["Pregnancy/breastfeeding caution (limited data)"],
+    "common_side_effects": ["Drowsiness", "Vivid dreams"],
+    "listed_in_tunisia_neml": false
+  },
+  {
+    "name": "Tetracycline (topical/oral)",
+    "generic": "Tetracycline",
+    "class": "Tetracycline antibiotic",
+    "common_uses": ["Acne (topical/oral)", "Certain bacterial infections"],
+    "precautions_contraindications": ["Pregnancy", "Children <8 years"],
+    "common_side_effects": ["Photosensitivity", "Tooth discoloration in children"],
+    "listed_in_tunisia_neml": false
+  },
+  {
+    "name": "Chloroquine",
+    "generic": "Chloroquine",
+    "class": "Antimalarial",
+    "common_uses": ["Malaria (sensitive strains)", "Certain rheumatologic uses historically"],
+    "precautions_contraindications": ["Retinopathy risk with chronic use"],
+    "common_side_effects": ["GI upset", "Retinal toxicity (long-term)"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Levofloxacin",
+    "generic": "Levofloxacin",
+    "class": "Fluoroquinolone antibiotic",
+    "common_uses": ["Respiratory infections", "Certain complicated UTIs"],
+    "precautions_contraindications": ["Tendon risk", "QT prolongation caution"],
+    "common_side_effects": ["Nausea", "Dizziness", "Tendonitis risk"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Linezolid",
+    "generic": "Linezolid",
+    "class": "Oxazolidinone antibiotic",
+    "common_uses": ["MRSA, VRE and other resistant gram-positive infections"],
+    "precautions_contraindications": ["MAOI interactions (serotonin syndrome risk)"],
+    "common_side_effects": ["Thrombocytopenia", "Peripheral neuropathy (long-term)"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Vancomycin",
+    "generic": "Vancomycin",
+    "class": "Glycopeptide antibiotic",
+    "common_uses": ["Severe gram-positive infections including MRSA", "C. difficile (oral)"],
+    "precautions_contraindications": ["Nephrotoxicity and ototoxicity risk"],
+    "common_side_effects": ["Nephrotoxicity", "Red man syndrome (infusion-related)"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Meropenem",
+    "generic": "Meropenem",
+    "class": "Carbapenem antibiotic",
+    "common_uses": ["Severe hospital-acquired infections", "Complicated intra-abdominal infections"],
+    "precautions_contraindications": ["Seizure risk in patients with CNS disease or high doses"],
+    "common_side_effects": ["Seizures (rare)", "GI upset"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Cefepime",
+    "generic": "Cefepime",
+    "class": "4th-generation cephalosporin",
+    "common_uses": ["Serious gram-negative infections", "Severe hospital infections"],
+    "precautions_contraindications": ["Allergy to cephalosporins"],
+    "common_side_effects": ["Neurotoxicity in renal impairment (rare)", "Allergic reactions"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Sulfamethoxazole + Trimethoprim",
+    "generic": "Co-trimoxazole (SMX-TMP)",
+    "class": "Sulfonamide derivative combination antibiotic",
+    "common_uses": ["UTIs", "Certain respiratory infections", "Pneumocystis jirovecii prophylaxis/treatment"],
+    "precautions_contraindications": ["Sulfa allergy", "Pregnancy (first trimester caution)"],
+    "common_side_effects": ["Rash (including severe hypersensitivity rarely)", "Hyperkalemia"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Ribavirin",
+    "generic": "Ribavirin",
+    "class": "Antiviral (broad-spectrum, used with interferon historically)",
+    "common_uses": ["Hepatitis C in combination (historical/selected regimens)", "Some viral hemorrhagic fevers (experimental)"],
+    "precautions_contraindications": ["Pregnancy (strongly contraindicated)", "Hemolytic anemia risk"],
+    "common_side_effects": ["Hemolytic anemia", "Teratogenicity"],
+    "listed_in_tunisia_neml": false
+  },
+  {
+    "name": "Interferon alfa (pegylated)",
+    "generic": "Pegylated interferon alfa",
+    "class": "Antiviral / immunomodulator",
+    "common_uses": ["Hepatitis C (older regimens)", "Certain malignancies and viral infections historically"],
+    "precautions_contraindications": ["Autoimmune disorders caution", "Psychiatric history"],
+    "common_side_effects": ["Flu-like symptoms", "Depression"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Sofosbuvir + Ledipasvir (fixed-dose)",
+    "generic": "Ledipasvir/sofosbuvir",
+    "class": "Direct-acting antiviral combination for HCV",
+    "common_uses": ["Hepatitis C, specific genotypes"],
+    "precautions_contraindications": ["Drug interactions", "Severe hepatic impairment caution"],
+    "common_side_effects": ["Fatigue", "Headache"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Valproic acid",
+    "generic": "Valproate (sodium valproate, valproic acid)",
+    "class": "Anticonvulsant, mood stabilizer",
+    "common_uses": ["Epilepsy", "Bipolar disorder"],
+    "precautions_contraindications": ["Pregnancy (teratogenic), severe hepatic disease"],
+    "common_side_effects": ["Weight gain", "Tremor", "Hepatotoxicity (rare)"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Carbamazepine",
+    "generic": "Carbamazepine",
+    "class": "Anticonvulsant",
+    "common_uses": ["Epilepsy", "Trigeminial neuralgia", "Bipolar disorder adjunct"],
+    "precautions_contraindications": ["Hyponatremia risk", "HLA-B*1502 allele caution in some ethnicities (Stevens-Johnson risk)"],
+    "common_side_effects": ["Dizziness", "Diplopia", "Hyponatremia"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Phenobarbital",
+    "generic": "Phenobarbital",
+    "class": "Barbiturate anticonvulsant",
+    "common_uses": ["Seizure control (especially in resource-limited settings)", "Status epilepticus (some settings)"],
+    "precautions_contraindications": ["Sedation", "Dependence", "Respiratory depression risk"],
+    "common_side_effects": ["Sedation", "Cognitive impairment"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Epinephrine (adrenaline)",
+    "generic": "Epinephrine",
+    "class": "Adrenergic agonist",
+    "common_uses": ["Anaphylaxis (IM)", "Cardiac arrest (IV/IO)", "Severe asthma (IM/IV)"],
+    "precautions_contraindications": ["Use with caution in ischemic heart disease"],
+    "common_side_effects": ["Tachycardia", "Hypertension", "Arrhythmias"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Naloxone",
+    "generic": "Naloxone hydrochloride",
+    "class": "Opioid antagonist",
+    "common_uses": ["Opioid overdose reversal"],
+    "precautions_contraindications": ["Precipitates acute withdrawal in opioid-dependent patients"],
+    "common_side_effects": ["Acute withdrawal symptoms", "Nausea"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Salbutamol nebulizer solution",
+    "generic": "Salbutamol",
+    "class": "Bronchodilator",
+    "common_uses": ["Acute bronchospasm in asthma or COPD"],
+    "precautions_contraindications": ["Cardiac arrhythmia caution"],
+    "common_side_effects": ["Tremor", "Palpitations"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Heparin (unfractionated)",
+    "generic": "Heparin",
+    "class": "Anticoagulant",
+    "common_uses": ["Acute anticoagulation (DVT/PE prophylaxis and treatment)", "During procedures"],
+    "precautions_contraindications": ["Active bleeding", "Heparin-induced thrombocytopenia (history)"],
+    "common_side_effects": ["Bleeding", "Heparin-induced thrombocytopenia"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Enoxaparin",
+    "generic": "Enoxaparin",
+    "class": "Low molecular weight heparin (anticoagulant)",
+    "common_uses": ["DVT prophylaxis and treatment", "Acute coronary syndromes (adjunct)"],
+    "precautions_contraindications": ["Active bleeding", "Severe renal impairment dose adjust"],
+    "common_side_effects": ["Bleeding", "Injection site bruising"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Propranolol",
+    "generic": "Propranolol",
+    "class": "Nonselective beta-blocker",
+    "common_uses": ["Migraine prophylaxis", "Essential tremor", "Hypertension", "Certain arrhythmias"],
+    "precautions_contraindications": ["Asthma/COPD severe", "Bradycardia", "Heart block"],
+    "common_side_effects": ["Fatigue", "Bradycardia", "Bronchospasm"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Clotrimazole (topical)",
+    "generic": "Clotrimazole",
+    "class": "Azole antifungal (topical)",
+    "common_uses": ["Dermatophyte and yeast skin infections", "Vaginal candidiasis topical formulations"],
+    "precautions_contraindications": ["Local irritation possible"],
+    "common_side_effects": ["Skin irritation"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Benzathine benzylpenicillin (IM)",
+    "generic": "Benzathine penicillin G",
+    "class": "Long-acting penicillin antibiotic",
+    "common_uses": ["Syphilis treatment", "Certain streptococcal infections prophylaxis"],
+    "precautions_contraindications": ["Penicillin allergy"],
+    "common_side_effects": ["Injection site pain", "Allergic reaction"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Erythromycin",
+    "generic": "Erythromycin",
+    "class": "Macrolide antibiotic",
+    "common_uses": ["Alternative respiratory infections", "Certain neonatal infections (topical ocular prophylaxis historically)"],
+    "precautions_contraindications": ["QT prolongation risk", "Drug interactions"],
+    "common_side_effects": ["GI upset", "Cholestatic hepatitis (rare)"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Piperacillin + Tazobactam",
+    "generic": "Piperacillin/tazobactam",
+    "class": "Extended-spectrum penicillin + beta-lactamase inhibitor",
+    "common_uses": ["Severe hospital-acquired infections", "Intra-abdominal infections"],
+    "precautions_contraindications": ["Penicillin allergy"],
+    "common_side_effects": ["GI upset", "Allergic reactions"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Azathioprine",
+    "generic": "Azathioprine",
+    "class": "Immunosuppressant (purine analogue)",
+    "common_uses": ["Autoimmune diseases", "Organ transplant rejection prevention"],
+    "precautions_contraindications": ["Pregnancy caution", "Bone marrow suppression"],
+    "common_side_effects": ["Bone marrow suppression", "GI upset", "Increased infection risk"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Cyclophosphamide",
+    "generic": "Cyclophosphamide",
+    "class": "Alkylating agent (cytotoxic/immunosuppressant)",
+    "common_uses": ["Certain cancers", "Severe autoimmune diseases"],
+    "precautions_contraindications": ["Hemorrhagic cystitis risk (mesna sometimes used)", "Bone marrow suppression"],
+    "common_side_effects": ["Nausea", "Bone marrow suppression", "Alopecia"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Methotrexate",
+    "generic": "Methotrexate",
+    "class": "Antimetabolite (immunosuppressant/antineoplastic)",
+    "common_uses": ["Psoriasis", "Rheumatoid arthritis", "Certain cancers"],
+    "precautions_contraindications": ["Pregnancy contraindicated", "Hepatic/renal impairment"],
+    "common_side_effects": ["Hepatotoxicity", "Bone marrow suppression", "Mucositis"],
+    "listed_in_tunisia_neml": true
+  },
+  {
+    "name": "Gabapentin (rapid repeat) - duplicate removed",
+    "generic": "Gabapentin",
+    "class": "Anticonvulsant/neuropathic agent",
+    "common_uses": ["Neuropathic pain"],
+    "precautions_contraindications": ["Renal impairment"],
+    "common_side_effects": ["Drowsiness", "Dizziness"],
+    "listed_in_tunisia_neml": true
+  }
+]

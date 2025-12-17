@@ -138,7 +138,7 @@ class BaseAgent:
         
         return result
     
-    async def delegate_to_agent(self, agent_name: str, task: str, context: Dict[str, Any] = None) -> AgentResponse:
+    async def delegate_to_agent(self, agent_name: str, task: str, context: Optional[Dict[str, Any]] = None) -> AgentResponse:
         """Delegate a task to a sub-agent."""
         if agent_name not in self.sub_agents:
             raise ValueError(f"Agent '{agent_name}' not found in {self.name}'s sub-agents")

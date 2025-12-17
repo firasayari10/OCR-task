@@ -5,7 +5,7 @@ This module contains all the tools that agents can use to interact with
 OCR models, image processing, and external APIs.
 """
 
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 import cv2
 import numpy as np
 from PIL import Image
@@ -119,11 +119,14 @@ def create_trocr_tool(model_pipeline) -> Tool:
             raise ValueError("TrOCR model not initialized")
         
         # Convert numpy array to PIL Image
+        pil_image: Image.Image
         if isinstance(image, np.ndarray):
-            image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+            pil_image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+        else:
+            pil_image = image  # type: ignore
         
         # Run TrOCR
-        result = model_pipeline(image)
+        result = model_pipeline(pil_image)
         
         if isinstance(result, list) and len(result) > 0:
             return result[0].get('generated_text', '')
@@ -140,7 +143,7 @@ def create_trocr_tool(model_pipeline) -> Tool:
     )
 
 
-def create_phi_filter_tool(hf_token: str = None) -> Tool:
+def create_phi_filter_tool(hf_token: Optional[str] = None) -> Tool:
     """Create a tool for PHI filtering."""
     
     def filter_phi(text: str, **kwargs) -> Dict[str, Any]:
@@ -201,8 +204,9 @@ def create_phi_filter_tool(hf_token: str = None) -> Tool:
                     if current_entity:
                         grouped_entities.append(current_entity)
                     
-                    for ent in grouped_entities:
-                        phi_spans.append((ent['start'], ent['end'], ent['type'], ent['word']))
+                    for ent_item in grouped_entities:
+                        ent_dict = dict(ent_item) if isinstance(ent_item, dict) else ent_item  # Convert to dict to avoid type issues
+                        phi_spans.append((ent_dict['start'], ent_dict['end'], ent_dict['type'], ent_dict['word']))
                         
                 except Exception as e:
                     print(f"NER failed: {e}")
@@ -292,7 +296,7 @@ def create_phi_filter_tool(hf_token: str = None) -> Tool:
 def create_image_preprocessing_tool() -> Tool:
     """Create a tool for image preprocessing."""
     
-    def preprocess_image(image: np.ndarray, operations: List[str] = None, **kwargs) -> np.ndarray:
+    def preprocess_image(image: np.ndarray, operations: Optional[List[str]] = None, **kwargs) -> np.ndarray:
         """
         Preprocess an image with various operations.
         
@@ -342,7 +346,7 @@ def create_image_preprocessing_tool() -> Tool:
 def create_region_extraction_tool() -> Tool:
     """Create a tool for extracting regions from images."""
     
-    def extract_regions(image: np.ndarray, masks: List[Dict[str, Any]] = None, **kwargs) -> List[Dict[str, Any]]:
+    def extract_regions(image: np.ndarray, masks: Optional[List[Dict[str, Any]]] = None, **kwargs) -> List[Dict[str, Any]]:
         """
         Extract image regions based on masks.
         

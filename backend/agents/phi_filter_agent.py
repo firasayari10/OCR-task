@@ -95,7 +95,7 @@ class PHIFilterAgent(BaseAgent):
     
     def _generate_phi_summary(self, phi_list: list) -> Dict[str, int]:
         """Generate a summary of PHI types found."""
-        summary = {}
+        summary: Dict[str, Any] = {}
         for phi_item in phi_list:
             phi_type = phi_item.get('type', 'UNKNOWN')
             summary[phi_type] = summary.get(phi_type, 0) + 1

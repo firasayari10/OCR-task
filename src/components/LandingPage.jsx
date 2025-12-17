@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import './LandingPage.css'
 
 const LandingPage = () => {
-  const [isScrolled, setIsScrolled] = useState(false)
   const [uploadedImage, setUploadedImage] = useState(null)
   const [ocrText, setOcrText] = useState('')
   const [extractedText, setExtractedText] = useState('') // Store just the extracted text
@@ -15,18 +14,6 @@ const LandingPage = () => {
   const [apiError, setApiError] = useState(null)
   const [showOverlay, setShowOverlay] = useState(true)
   const [showMetadata, setShowMetadata] = useState(false) // Toggle for metadata
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
-    }
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  const scrollToSection = (id) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
-  }
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0]
@@ -163,38 +150,10 @@ const LandingPage = () => {
 
   return (
     <div className="landing-page">
-      {/* Navigation */}
-      <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
-        <div className="nav-container">
-          <div className="logo">YourBrand</div>
-          <ul className="nav-menu">
-            <li><a href="#home" onClick={(e) => { e.preventDefault(); scrollToSection('home') }}>Home</a></li>
-            <li><a href="#ocr" onClick={(e) => { e.preventDefault(); scrollToSection('ocr') }}>OCR Scanner</a></li>
-            <li><a href="#features" onClick={(e) => { e.preventDefault(); scrollToSection('features') }}>Features</a></li>
-            <li><a href="#about" onClick={(e) => { e.preventDefault(); scrollToSection('about') }}>About</a></li>
-            <li><a href="#contact" onClick={(e) => { e.preventDefault(); scrollToSection('contact') }}>Contact</a></li>
-          </ul>
-          <button className="cta-button">Get Started</button>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <section id="home" className="hero">
-        <div className="hero-content">
-          <h1 className="hero-title">
-            Prescription OCR
-            <span className="gradient-text"> Scanner</span>
-          </h1>
-          <p className="hero-subtitle">
-            Upload your doctor's prescription and extract text instantly with our advanced OCR technology.
-            Fast, accurate, and secure.
-          </p>
-        </div>
-      </section>
-
       {/* OCR Upload Section */}
       <section id="ocr" className="ocr-section">
         <div className="container">
+          <h2 className="section-title">Medical Prescription OCR</h2>
           <div className="ocr-container">
             {/* Upload Section */}
             <div className="upload-section">
@@ -352,6 +311,19 @@ const LandingPage = () => {
                               <div key={idx} className="fda-item">
                                 <h5>Original: {item.original_drug.name} {item.original_drug.dosage}</h5>
                                 
+                                {/* Show vector database indicator */}
+                                {item.drug_info.primary_source === "Essential Medications Database (Local)" && (
+                                  <div className="vector-db-indicator">
+                                    <span className="vector-db-icon">🗄️</span>
+                                    <span className="vector-db-text">Found in Local Essential Medications Database</span>
+                                    {item.drug_info.match_confidence && (
+                                      <span className="vector-db-confidence">
+                                        Match: {(item.drug_info.match_confidence * 100).toFixed(0)}%
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+                                
                                 {/* Show alternatives from database APIs if available */}
                                 {item.drug_info.alternatives && item.drug_info.alternatives.length > 0 && (
                                   <div className="alternatives-grid">
@@ -361,10 +333,36 @@ const LandingPage = () => {
                                         {alt.brand_names && alt.brand_names.length > 0 && (
                                           <div className="alt-brands">Brands: {alt.brand_names.join(', ')}</div>
                                         )}
+                                        {alt.dosage && <div className="alt-dosage">Dosage: {alt.dosage}</div>}
+                                        {alt.forme && <div className="alt-forme">Form: {alt.forme}</div>}
+                                        {alt.usage_type && (
+                                          <div className={`alt-usage usage-${alt.usage_type.toLowerCase()}`}>
+                                            {alt.usage_type}
+                                          </div>
+                                        )}
                                         <div className="alt-manufacturer">{alt.manufacturer}</div>
-                                        <div className="alt-indication">{alt.indication.substring(0, 100)}...</div>
+                                        <div className="alt-indication">{alt.indication ? alt.indication.substring(0, 100) + '...' : ''}</div>
+                                        {alt.source && (
+                                          <div className="alt-source-badge">
+                                            {alt.source === "Essential Medications DB" ? "🗄️" : "🌐"} {alt.source}
+                                          </div>
+                                        )}
                                       </div>
                                     ))}
+                                  </div>
+                                )}
+                                
+                                {/* Show data sources */}
+                                {item.drug_info.sources_found && item.drug_info.sources_found.length > 0 && (
+                                  <div className="multi-source-info">
+                                    <div className="sources-label">📚 Data from {item.drug_info.sources_found.length} source(s):</div>
+                                    <div className="sources-list">
+                                      {item.drug_info.sources_found.map((src, idx) => (
+                                        <span key={idx} className="source-pill">
+                                          {src.includes("Local") || src.includes("Essential") ? "🗄️" : "🌐"} {src}
+                                        </span>
+                                      ))}
+                                    </div>
                                   </div>
                                 )}
                                 
@@ -381,7 +379,9 @@ const LandingPage = () => {
                                   </div>
                                 )}
                                 
-                                <div className="source-badge">Source: {item.drug_info.source}</div>
+                                <div className="source-badge">
+                                  Primary Source: {item.drug_info.primary_source || item.drug_info.source}
+                                </div>
                               </div>
                             ))}
                           </div>
@@ -475,178 +475,8 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
-
-      {/* Features Section */}
-      <section id="features" className="features">
-        <div className="container">
-          <h2 className="section-title">Why Choose Us</h2>
-          <p className="section-subtitle">Discover what makes us different</p>
-          <div className="features-grid">
-            <div className="feature-card">
-              <div className="feature-icon">⚡</div>
-              <h3>Lightning Fast</h3>
-              <p>Experience blazing-fast performance with our optimized infrastructure.</p>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon">🎨</div>
-              <h3>Beautiful Design</h3>
-              <p>Stunning, modern interfaces that your users will love.</p>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon">🛡️</div>
-              <h3>Secure & Safe</h3>
-              <p>Enterprise-grade security to protect your data and privacy.</p>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon">📱</div>
-              <h3>Responsive</h3>
-              <p>Works perfectly on all devices, from mobile to desktop.</p>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon">🌐</div>
-              <h3>Global Reach</h3>
-              <p>Available worldwide with 24/7 support in multiple languages.</p>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon">💡</div>
-              <h3>Innovative</h3>
-              <p>Cutting-edge technology that keeps you ahead of the competition.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* About Section */}
-      <section id="about" className="about">
-        <div className="container">
-          <div className="about-content">
-            <div className="about-text">
-              <h2 className="section-title">About Us</h2>
-              <p>
-                We are a team of passionate developers, designers, and innovators
-                dedicated to creating exceptional digital experiences. With years
-                of experience and a commitment to excellence, we deliver solutions
-                that exceed expectations.
-              </p>
-              <p>
-                Our mission is to empower businesses and individuals with tools
-                that make a real difference. We believe in the power of technology
-                to transform lives and drive positive change.
-              </p>
-              <div className="stats">
-                <div className="stat-item">
-                  <div className="stat-number">10K+</div>
-                  <div className="stat-label">Happy Customers</div>
-                </div>
-                <div className="stat-item">
-                  <div className="stat-number">50+</div>
-                  <div className="stat-label">Countries</div>
-                </div>
-                <div className="stat-item">
-                  <div className="stat-number">99.9%</div>
-                  <div className="stat-label">Uptime</div>
-                </div>
-              </div>
-            </div>
-            <div className="about-image">
-              <div className="image-placeholder">
-                <div className="placeholder-content">
-                  <span>Your Image Here</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section id="contact" className="contact">
-        <div className="container">
-          <h2 className="section-title">Get In Touch</h2>
-          <p className="section-subtitle">We'd love to hear from you</p>
-          <div className="contact-content">
-            <form className="contact-form">
-              <div className="form-group">
-                <input type="text" placeholder="Your Name" required />
-              </div>
-              <div className="form-group">
-                <input type="email" placeholder="Your Email" required />
-              </div>
-              <div className="form-group">
-                <textarea placeholder="Your Message" rows="5" required></textarea>
-              </div>
-              <button type="submit" className="btn btn-primary">Send Message</button>
-            </form>
-            <div className="contact-info">
-              <div className="info-item">
-                <div className="info-icon">📧</div>
-                <div>
-                  <h4>Email</h4>
-                  <p>contact@yourbrand.com</p>
-                </div>
-              </div>
-              <div className="info-item">
-                <div className="info-icon">📞</div>
-                <div>
-                  <h4>Phone</h4>
-                  <p>+1 (555) 123-4567</p>
-                </div>
-              </div>
-              <div className="info-item">
-                <div className="info-icon">📍</div>
-                <div>
-                  <h4>Address</h4>
-                  <p>123 Innovation Street<br />Tech City, TC 12345</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="footer">
-        <div className="container">
-          <div className="footer-content">
-            <div className="footer-section">
-              <h3>YourBrand</h3>
-              <p>Building the future, one innovation at a time.</p>
-            </div>
-            <div className="footer-section">
-              <h4>Quick Links</h4>
-              <ul>
-                <li><a href="#home">Home</a></li>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
-              </ul>
-            </div>
-            <div className="footer-section">
-              <h4>Legal</h4>
-              <ul>
-                <li><a href="#">Privacy Policy</a></li>
-                <li><a href="#">Terms of Service</a></li>
-                <li><a href="#">Cookie Policy</a></li>
-              </ul>
-            </div>
-            <div className="footer-section">
-              <h4>Follow Us</h4>
-              <div className="social-links">
-                <a href="#" aria-label="Twitter">🐦</a>
-                <a href="#" aria-label="Facebook">📘</a>
-                <a href="#" aria-label="Instagram">📷</a>
-                <a href="#" aria-label="LinkedIn">💼</a>
-              </div>
-            </div>
-          </div>
-          <div className="footer-bottom">
-            <p>&copy; 2024 YourBrand. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   )
 }
 
 export default LandingPage
-
